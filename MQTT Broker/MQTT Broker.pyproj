@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>a3d35cd4-26da-46db-b059-5fb259e127df</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>MQTT_Broker.py</StartupFile>
+    <StartupFile>Program.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -21,7 +21,15 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="MQTT_Broker.py" />
+    <Compile Include="Client.py" />
+    <Compile Include="ClientManager.py" />
+    <Compile Include="ContentFlagByte.py" />
+    <Compile Include="MQTTHelper.py" />
+    <Compile Include="MQTTService.py" />
+    <Compile Include="Program.py" />
+    <Compile Include="Server.py" />
+    <Compile Include="UserCredentials.py" />
+    <Compile Include="VaribleHeader.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
