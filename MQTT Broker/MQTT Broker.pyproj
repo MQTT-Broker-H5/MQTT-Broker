@@ -21,15 +21,30 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Client.py" />
+    <Compile Include="Models\Client.py" />
     <Compile Include="ClientManager.py" />
     <Compile Include="ContentFlagByte.py" />
+    <Compile Include="Models\ConnackHeader.py" />
+    <Compile Include="Models\ConnectHeader.py" />
+    <Compile Include="Models\ConnectPayload.py" />
+    <Compile Include="Models\ContentFlagByte.py" />
+    <Compile Include="Models\FixHeader.py" />
+    <Compile Include="Models\FixHeaderFlags.py" />
+    <Compile Include="Models\MQTTPacket.py" />
+    <Compile Include="Models\Payload.py" />
+    <Compile Include="Models\PubackHeader.py" />
+    <Compile Include="Models\PublishHeader.py" />
+    <Compile Include="Models\SubackPayload.py" />
+    <Compile Include="Models\SubscribePayload.py" />
+    <Compile Include="Models\UnsubscribePayload.py" />
+    <Compile Include="Models\VariableHeader.py" />
     <Compile Include="MQTTHelper.py" />
     <Compile Include="MQTTService.py" />
     <Compile Include="Program.py" />
     <Compile Include="Server.py" />
-    <Compile Include="UserCredentials.py" />
-    <Compile Include="VaribleHeader.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

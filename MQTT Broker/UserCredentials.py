@@ -1,6 +1,0 @@
-class UserCredentials:
-    pass
-
-
-
-
