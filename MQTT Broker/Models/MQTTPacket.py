@@ -1,9 +1,12 @@
-class MQTTPacket:
-    def __init__(self,fixHeader,varibleHeader,payload):
+from Payload import c_Payload
+from FixHeader import c_FixHeader
+from VariableHeader import c_VariableHeader
+class c_MQTTPacket():
+    def __init__(self,fixHeader:c_FixHeader,varibleHeader:c_VariableHeader,payload:c_Payload):
         self._FixHeader = fixHeader
         self._VaribleHeader = varibleHeader
         self._Payload = payload
-
+        
     def _Get_FixHeader(self):
         return self._FixHeader
     def _Get_VaribleHeader(self):

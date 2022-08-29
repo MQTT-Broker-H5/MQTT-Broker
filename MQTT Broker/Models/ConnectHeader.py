@@ -1,5 +1,6 @@
-class ConnectHeader:
-    def __init__(self,protocolName,protocolLevel,contentFlagByte,keepAlive):
+from ContentFlagByte import c_ContentFlagByte
+class c_ConnectHeader:
+    def __init__(self,protocolName:str,protocolLevel:int,contentFlagByte:c_ContentFlagByte,keepAlive:int):
         self._ProtocolName = protocolName
         self._ProtocolLevel = protocolLevel
         self._ContentFlagByte = contentFlagByte

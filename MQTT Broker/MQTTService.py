@@ -1,5 +1,8 @@
 class MQTTService:
-    pass
+    
+    @staticmethod
+    def ValidateConnect(self,packet):
+        pass
 
 
 

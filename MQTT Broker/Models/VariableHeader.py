@@ -1,5 +1,9 @@
-class VariableHeader:
-    def __init__(self,connectHeader,connackHeader,publishHeader,pubackHeader):
+from ConnectHeader import c_ConnectHeader
+from ConnackHeader import c_ConnackHeader
+from PublishHeader import c_PublishHeader
+from PubackHeader import c_PubackHeader
+class c_VariableHeader:
+    def __init__(self,connectHeader:c_ConnectHeader,connackHeader:c_ConnackHeader,publishHeader:c_PublishHeader,pubackHeader:c_PubackHeader):
         self._ConnectHeader = connectHeader
         self._ConnackHeader = connackHeader
         self._PublishHeader = publishHeader

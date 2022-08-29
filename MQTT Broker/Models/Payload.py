@@ -1,5 +1,9 @@
-class Payload:
-    def __init__(self,unsubscribePayload,subackPayload,subscribePayload,connectPayload):
+from UnsubscribePayload import c_UnSubscribePayload
+from SubackPayload import c_SubackPayload
+from SubscribePayload import c_SubscribePayload
+from ConnectPayload import c_ConnectPayload
+class c_Payload:
+    def __init__(self,unsubscribePayload:c_UnSubscribePayload,subackPayload:c_SubackPayload,subscribePayload:c_SubscribePayload,connectPayload:c_ConnectPayload):
         self._UnsubscribePayload = unsubscribePayload
         self._SubackPayload = subackPayload
         self._SubscribePayload = subscribePayload
@@ -21,7 +25,7 @@ class Payload:
     def _Set_SubscribePayload(self,value):
         self._SubscribePayload = value
     def _Set_ConnectPayload(self,value):
-        self._ConnectPayload = vaue
+        self._ConnectPayload = value
 
     UnsubcribePayload = property(
         fget= _Get_UnsubscribePayload,

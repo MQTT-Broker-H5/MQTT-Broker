@@ -1,5 +1,5 @@
-class PubackHeader:
-    def __init__(self,packetIdentifer):
+class c_PubackHeader:
+    def __init__(self,packetIdentifer:int):
         self._PacketIdentifer = packetIdentifer
 
     def _Get_PacketIdentifer(self):

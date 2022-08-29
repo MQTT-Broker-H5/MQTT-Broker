@@ -1,5 +1,5 @@
-class ContentFlagByte:
-    def __init__(self,cleanSession,willFlag,willQoS,willRetain,passwordFlag,usernameFlag):
+class c_ContentFlagByte:
+    def __init__(self,cleanSession:bool,willFlag:bool,willQoS:int,willRetain:bool,passwordFlag:bool,usernameFlag:bool):
         self.CleanSession = cleanSession
         self.WillFlag = willFlag
         self._WillQoS = willQoS
@@ -53,7 +53,7 @@ class ContentFlagByte:
         fget=_get_PassworFlag,
         fset=_Set_PassworFlag)
 
-    UsernameFlag = Property(
+    UsernameFlag = property(
         fget=_get_UsernameFlag,
         fset=_Set_UsernameFlag)
 

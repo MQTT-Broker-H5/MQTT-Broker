@@ -1,5 +1,5 @@
-class ConnectPayload:
-    def __init__(self,clientIDLenght,clientID,userNameLenght,userName,passwordLenght,password):
+class c_ConnectPayload:
+    def __init__(self,clientIDLenght:int,clientID:str,userNameLenght:int,userName:str,passwordLenght:int,password:str):
         self._ClientIDLenght = clientIDLenght
         self._ClientID = clientID
         self._UserNameLenght = userNameLenght

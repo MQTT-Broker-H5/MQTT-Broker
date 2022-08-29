@@ -1,6 +1,7 @@
-class Client:
-    def _init__(self,mqttPacket):
-        self._MQTTPacket = mqttPacket
+from MQTTPacket import c_MQTTPacket
+class c_MQTTClient:
+    def __init__(self,mqtttPacket:c_MQTTPacket):
+        self._MQTTPacket = mqtttPacket
 
     def _Get_MQTTPacket(self):
         return self._MQTTPacket
@@ -10,7 +11,3 @@ class Client:
     MQTTPacket = property(
         fget= _Get_MQTTPacket,
         fset= _Set_MQTTPacket)
-
-
-
-

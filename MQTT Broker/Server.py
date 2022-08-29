@@ -1,4 +1,6 @@
 from ast import For, Str
+from email.message import Message
+from MQTTHelper import MQTTHelper
 
 import socket
 from _thread import *
@@ -25,9 +27,10 @@ class Server:
                 print("Data under:")
                 print(data)
                 print("end of data")
+                test = MQTTHelper()
                 message = data.decode('utf-8')
-                print(self.SplitString(message))
-
+                test.ConvertDecimalToHex(self,message)
+                print(message)
                 if message == 'BYE':
                     break
                 reply = f'Server: {message}'
@@ -65,14 +68,6 @@ class Server:
             inp = input('')
             if inp == "count":
                  print(len(self.clients))
-
-    @staticmethod
-    def SplitString(message):
-        print(len(message))
-        for x in range(len(message)):
-            print(x)
-        temp = message
-        return temp
 
 
 
