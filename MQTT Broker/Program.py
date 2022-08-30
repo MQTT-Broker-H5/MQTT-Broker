@@ -1,5 +1,4 @@
-from Server import Server
-from MQTTHelper import MQTTHelper
+from Server import c_Server
 def main():
-    test = Server()
+    test = c_Server()
 main()

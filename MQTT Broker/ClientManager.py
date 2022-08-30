@@ -1,5 +1,4 @@
 from asyncio.windows_events import NULL
-import imp
 from Models.MQTTPacket import c_MQTTPacket
 from Models.Client import c_MQTTClient
 from Models.FixHeader import c_FixHeader
@@ -13,7 +12,7 @@ from Models.SubackPayload import c_SubackPayload
 from Models.SubscribePayload import c_SubscribePayload
 from Models.ConnectPayload import c_ConnectPayload
 from Models.UnsubscribePayload import c_UnSubscribePayload
-class ClientManager:
+class c_ClientManager:
     ClientList = list()
 
     def GenerateUser(self,packet):

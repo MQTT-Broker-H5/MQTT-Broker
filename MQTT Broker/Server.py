@@ -1,19 +1,13 @@
-from ast import For, Str
-from email.message import Message
-from MQTTHelper import MQTTHelper
+from MQTTService import c_MQTTService
 
 import socket
 from _thread import *
-from stringprep import c22_specials
-from time import process_time_ns
-from tkinter import Y
-from wsgiref import validate
-from xml.etree.ElementTree import tostring
-class Server:
+class c_Server:
     host = '127.0.0.1'
     port = 8000
     ThreadCount = 0
     clients = list()
+    MQTTService = c_MQTTService()
 
     def __init__(self):
         self.start_server(self.host, self.port)
@@ -27,9 +21,8 @@ class Server:
                 print("Data under:")
                 print(data)
                 print("end of data")
-                test = MQTTHelper()
+                self.MQTTService.ValidateConnect(data)
                 message = data.decode('utf-8')
-                test.ConvertDecimalToHex(self,message)
                 print(message)
                 if message == 'BYE':
                     break
@@ -51,9 +44,6 @@ class Server:
     def start_server(self, host, port):
     
         c = int(32)
-
-    
-    
         ServerSocket = socket.socket()
         try:
             ServerSocket.bind((host, port))
