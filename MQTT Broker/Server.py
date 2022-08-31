@@ -28,6 +28,7 @@ class c_Server:
             try:
                 data = connection.recv(2048)
 
+
                 if not data:
                     self.disconnect(connection)
                     self.clients.remove(connection)

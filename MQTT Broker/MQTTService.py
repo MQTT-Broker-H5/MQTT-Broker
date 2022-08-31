@@ -1,11 +1,8 @@
-from operator import truediv
-from sqlite3 import connect
 from ClientManager import c_ClientManager
 from MQTTHelper import c_MQTTHelper
 class c_MQTTService:
     MQTTHelper = c_MQTTHelper()
     ClientManager = c_ClientManager()
-    
     
     def ValidateConnect(self,packet):
         self.ClientManager.GenerateUser(packet)
@@ -24,7 +21,6 @@ class c_MQTTService:
             PNPacket.append(packet[3 + x])
         self.ValidateProtocolName(PNLenght,PNPacket)
         self.ValidateProtocolLeven(packet[8])
-        self.LeftBitwiseCheckFlags(int(packet[9],16))
         #self.ReservedBitInFlags(int(packet[9],16))
         #print(self.CleanSessionBitInFlags(int(packet[9],16)))
         pass
@@ -46,16 +42,6 @@ class c_MQTTService:
         if level != "0x4":
             return False
         return True
-
-    #We are using bitwise operator left shifting to check if the bit is set
-    #If the bit is set we add it to an arry so we can do validation them
-    def LeftBitwiseCheckFlags(self,flags):
-        reservedBits = []
-        for kth in range(1,9):
-            if flags &(1 << (kth -1)):
-                reservedBits.append(kth)
-        return reservedBits
-
 
     def ValidateFlag(self,byte,flags):
         temp = [False,False,False,False,False,False,False,False]
