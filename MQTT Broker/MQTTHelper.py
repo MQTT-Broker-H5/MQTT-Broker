@@ -45,10 +45,14 @@ class c_MQTTHelper:
             tempStr = "Publish"
         elif hex == "0x80":
             tempStr = "Subscribe"
-        elif hex == "0xC0":
+        elif hex == "0xc0":
             tempStr = "Ping"
-        elif hex == "0xE0":
+        elif hex == "0xe0":
             tempStr = "Disconnect"
+        elif hex == "xc0":
+            tempStr = "Heartbeat"
+        elif hex == "x02":
+            tempStr = "Ping"
         return tempStr
 
 
