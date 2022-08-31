@@ -8,13 +8,13 @@ class c_MQTTService:
     
     
     def ValidateConnect(self,packet):
-        connectPakcet = []
-        print("Inside validateConnect")
-        print(packet)
-        hexArray = self.MQTTHelper.ConvertDecimalToHex(packet)
-        connectPakcet.append(self.GetCommand(hexArray[0]))
-        self.VlaidatePacketLenght(int(hexArray[1],16),len(hexArray) - 2)
-        self.ValidateVaribleHeader(hexArray)
+        self.ClientManager.GenerateUser(packet)
+        #connectPakcet = []
+        #print("Inside validateConnect")
+        #print(packet)
+        #connectPakcet.append(self.GetCommand(hexArray[0]))
+        #self.VlaidatePacketLenght(int(hexArray[1],16),len(hexArray) - 2)
+        #self.ValidateVaribleHeader(hexArray)
         pass
     
     def ValidateVaribleHeader(self,packet):
@@ -28,21 +28,6 @@ class c_MQTTService:
         #self.ReservedBitInFlags(int(packet[9],16))
         #print(self.CleanSessionBitInFlags(int(packet[9],16)))
         pass
-
-    #Incase of default value, disconnect client from the broker
-    def GetCommand(self,hex):
-        tempStr = "Wrong input"
-        if hex == "0x10":
-            tempStr = "Connect"
-        elif hex == "0x30":
-            tempStr = "Publish"
-        elif hex == "0x80":
-            tempStr = "Subscribe"
-        elif hex == "0xC0":
-            tempStr = "Ping"
-        elif hex == "0xE0":
-            tempStr = "Disconnect" 
-        return tempStr
 
     # Incase of false return, disconnect client form the broker
     def VlaidatePacketLenght(self,contentLenght,packetLenght):
@@ -73,14 +58,19 @@ class c_MQTTService:
 
 
     def ValidateFlag(self,byte,flags):
+        temp = [False,False,False,False,False,False,False,False]
         QoS = []
         for bit in byte:
             if bit == 1:
+                temp[0] = True
                 #Disconnect
                 pass
             elif bit ==2:
+                temp[1] = True
+                #Discard old session if exist, and start new
                 pass
             elif bit ==3:
+                temp[2] = True
                 #Store will message
                 pass
             elif bit ==4:
@@ -90,24 +80,40 @@ class c_MQTTService:
                 QoS.append(bit)
                 pass
             elif bit ==6:
+                temp[5] = True
                 #Store will message as a retained message
                 pass
             elif bit ==7:
+                temp[6] = True
                 #Check for username in payload
                 pass
             elif bit ==8:
+                temp[7] = True
                 #Cheack for Password in payload
                 pass
+        for index in temp:
+            if temp[index] == False:
+                pass
+
 
         if len(QoS) == 2:
             #Disconnect
             pass
         elif len(QoS) != 2:
-            #Generate QoS Method
+            print("QoS: " + self.GenerateQoS())
             pass
 
 
-    def GenerateQoS()
+    def GenerateQoS(self,QoS):
+        qos = 3
+        if len(QoS) != 0:
+            if QoS[0] != 4:
+                qos = 2
+            elif QoS[0] == 4:
+                qos = 1
+        return qos
+
+        
     def ResumeConnection(self,):
         pass
     #Return True if the first bit in the byte is set.

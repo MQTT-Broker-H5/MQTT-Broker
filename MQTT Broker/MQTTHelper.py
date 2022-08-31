@@ -27,12 +27,28 @@ class c_MQTTHelper:
             hexPacket.append(data)
         print("string builder: " + c_MQTTHelper.StringBuilder(self,hexPacket))
         print(hexPacket)
-        return
+        return hexPacket
     
     def StringBuilder(self,packet):
         tempString = ""
         for item in packet:
             tempString += item
         return tempString
+    
+    #Incase of default value, disconnect client from the broker
+    def GetCommand(self,packet):
+        hex = self.ConvertDecimalToHex(packet)[0]
+        tempStr = "Wrong input"
+        if hex == "0x10":
+            tempStr = "Connect"
+        elif hex == "0x30":
+            tempStr = "Publish"
+        elif hex == "0x80":
+            tempStr = "Subscribe"
+        elif hex == "0xC0":
+            tempStr = "Ping"
+        elif hex == "0xE0":
+            tempStr = "Disconnect"
+        return tempStr
 
 
