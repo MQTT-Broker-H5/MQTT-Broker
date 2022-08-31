@@ -18,6 +18,7 @@ class c_Server:
         while True:
             try:
                 data = connection.recv(2048)
+                print(data)
                 self.MQTTService.ValidateConnect(data)
                 message = data.decode('utf-8')
                 if message == 'BYE':
