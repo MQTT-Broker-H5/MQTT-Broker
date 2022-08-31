@@ -1,5 +1,13 @@
+from asyncio.windows_events import NULL
+from concurrent.futures import thread
+from contextlib import nullcontext
+from http import client
+from pydoc import cli
+from re import X
+from socketserver import DatagramRequestHandler
+from sqlite3 import connect
 from MQTTService import c_MQTTService
-
+from MQTTHelper import c_MQTTHelper
 import socket
 from _thread import *
 class c_Server:
@@ -8,24 +16,40 @@ class c_Server:
     ThreadCount = 0
     clients = list()
     MQTTService = c_MQTTService()
+    MQTTHelper = c_MQTTHelper()
 
     def __init__(self):
         self.start_server(self.host, self.port)
 
-    def client_handler(self,connection):
+    def client_handler(self,connection: socket.socket):
+        
         self.clients.append(connection)
-        connection.send(str.encode('You are now connected to the replay server... Type BYE to stop'))
         while True:
             try:
                 data = connection.recv(2048)
-                print(data)
-                self.MQTTService.ValidateConnect(data)
-                message = data.decode('utf-8')
-                if message == 'BYE':
-                    break
-                reply = f'Server: {message}'
-                connection.sendall(str.encode(reply))
-            except :
+
+
+                if not data:
+                    self.disconnect(connection)
+                    self.clients.remove(connection)
+                    
+
+                cmd = self.MQTTHelper.GetCommand(data)
+
+                if cmd == "Disconnect": 
+                    self.clients.remove(connection)
+                   
+                elif(cmd == 'Connect' and  connection in self.clients):
+                    self.AcceptConnection(connection)
+
+                elif cmd == "Wrong input":
+                    self.disconnect(connection)
+                
+                elif cmd == "Ping":
+                    self.SendHeartbeat(connection)
+               
+
+            except:
                 connection.close()
             
 
@@ -58,5 +82,20 @@ class c_Server:
 
 
 
+    def AcceptConnection(self,  clientCon : socket.socket):
+       clientCon.send(b'\x20\x02\x00\x00')
+       
+    def SendHeartbeat(self, clientCon : socket.socket):
+            clientCon.send(b'\xD0\x00')
+        
+    def disconnect(self,  clientCon: socket.socket):
+        clientCon.close()
+        self.clients.remove(clientCon)
 
-
+    def sendLastWill(self, client : socket.socket):
+         for count, sel in enumerate(self.clients) :
+            if(sel == client):
+                continue
+            else:
+                sel : socket.socket
+                sel.send('')
