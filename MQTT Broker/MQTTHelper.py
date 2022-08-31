@@ -55,4 +55,15 @@ class c_MQTTHelper:
             tempStr = "Ping"
         return tempStr
 
+    #We are using bitwise operator left shifting to check if the bit is set
+    #If the bit is set we add it to an arry so we can do validation them
+    def LeftBitwiseCheckFlags(self,flags):
+        reservedBits = []
+        for kth in range(1,9):
+            if flags &(1 << (kth -1)):
+                reservedBits.append(1)
+            else:
+                reservedBits.append(0)
+        return reservedBits
+
 
