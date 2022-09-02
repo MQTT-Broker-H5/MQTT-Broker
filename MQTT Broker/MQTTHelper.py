@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 class c_MQTTHelper:
     def ConvertHexToUtf(self,packet):
         return
@@ -65,5 +66,17 @@ class c_MQTTHelper:
             else:
                 reservedBits.append(0)
         return reservedBits
+
+    #Insert the ammount you wanted to be removed from the list
+    #The remove will happel from 0-ammount
+    #If you just want 1 item removed insert null in ammount
+    def RemoveFromPacket(self,packet:list,ammount):
+        if ammount != NULL:
+            for i in range(0, ammount):
+                i = 0
+                packet.pop(i)
+        else:
+            packet.pop(0)
+        return packet
 
 
