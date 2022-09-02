@@ -14,7 +14,7 @@ from Models.Client import c_MQTTClient
 import socket
 from _thread import *
 class c_Server:
-    host = '127.0.0.1'
+    host = '0.0.0.0'
     port = 8000
     ThreadCount = 0
     clients = list()
@@ -28,7 +28,9 @@ class c_Server:
         
         hostname = socket.gethostname()    
         self.host = socket.gethostbyname(hostname) 
-        self.port = port
+        self.port = int(port)
+        print("ip:" + str(self.host) +  "\nPort:" + str(self.port))
+
         self.start_server(self.host, self.port)
 
     def client_handler(self,connection: socket.socket):
@@ -49,7 +51,7 @@ class c_Server:
                    
                 elif(cmd == 'Connect' and  connection in self.clients):
                     self.MQTTService.ValidateConnect(data)
-                    #self.AcceptConnection(connection)
+                    self.AcceptConnection(connection)
 
                 elif cmd == "Wrong input":
                     self.disconnect(connection)
