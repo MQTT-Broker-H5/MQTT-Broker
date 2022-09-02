@@ -2,10 +2,12 @@ from asyncio.windows_events import NULL
 from concurrent.futures import thread
 from contextlib import nullcontext
 from http import client
+import ipaddress
 from pydoc import cli
 from re import X
 from socketserver import DatagramRequestHandler
 from sqlite3 import connect
+import string
 from MQTTService import c_MQTTService
 from MQTTHelper import c_MQTTHelper
 from Models.Client import c_MQTTClient
@@ -20,6 +22,13 @@ class c_Server:
     MQTTHelper = c_MQTTHelper()
 
     def __init__(self):
+        self.start_server(self.host, self.port)
+
+    def __init__(self, port : int):
+        
+        hostname = socket.gethostname()    
+        self.host = socket.gethostbyname(hostname) 
+        self.port = port
         self.start_server(self.host, self.port)
 
     def client_handler(self,connection: socket.socket):
