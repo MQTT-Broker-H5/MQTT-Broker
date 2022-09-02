@@ -28,7 +28,6 @@ class c_Server:
             try:
                 data = connection.recv(2048)
 
-
                 if not data:
                     self.disconnect(connection)
                     self.clients.remove(connection)
@@ -40,7 +39,8 @@ class c_Server:
                     self.clients.remove(connection)
                    
                 elif(cmd == 'Connect' and  connection in self.clients):
-                    self.AcceptConnection(connection)
+                    self.MQTTService.ValidateConnect(data)
+                    #self.AcceptConnection(connection)
 
                 elif cmd == "Wrong input":
                     self.disconnect(connection)
