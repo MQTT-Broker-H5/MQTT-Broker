@@ -8,6 +8,7 @@ from socketserver import DatagramRequestHandler
 from sqlite3 import connect
 from MQTTService import c_MQTTService
 from MQTTHelper import c_MQTTHelper
+from Models.Client import c_MQTTClient
 import socket
 from _thread import *
 class c_Server:
@@ -28,12 +29,10 @@ class c_Server:
             try:
                 data = connection.recv(2048)
 
-
                 if not data:
                     self.disconnect(connection)
                     self.clients.remove(connection)
                     
-
                 cmd = self.MQTTHelper.GetCommand(data)
 
                 if cmd == "Disconnect": 

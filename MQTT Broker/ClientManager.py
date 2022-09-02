@@ -19,6 +19,10 @@ class c_ClientManager:
     ClientList = list()
     Helper = c_MQTTHelper()
 
+    
+    #Metode der returnere en liste af c_MQTTClient
+    #map will topic
+
     def GenerateUser(self,packet):
         command = self.Helper.GetCommand(packet)
         if command == "Connect":
@@ -30,6 +34,10 @@ class c_ClientManager:
             c_VariableHeader(c_ConnectHeader(NULL,NULL,c_ContentFlagByte(NULL,NULL,NULL,NULL,NULL,NULL),NULL),c_ConnackHeader(NULL,NULL),),
             c_Payload(c_UnSubscribePayload(NULL),c_SubackPayload(NULL),c_SubscribePayload(NULL,NULL),c_ConnectPayload(NULL,NULL,NULL,NULL,NULL,NULL)))))    
     pass
+
+    def GetUsers(self) :
+        return self.ClientList
+
 
     def GenereateConnectUser(self,packet):
         hexPacket = self.Helper.ConvertDecimalToHex(packet)
