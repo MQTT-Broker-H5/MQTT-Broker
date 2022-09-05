@@ -6,18 +6,15 @@ from Models.VariableHeader import c_VariableHeader
 from Models.Payload import c_Payload
 from Models.FixHeaderFlags import c_FixHeaderFlags
 from Models.ConnectHeader import c_ConnectHeader
-from Models.ConnackHeader import c_ConnackHeader
 from Models.ContentFlagByte import c_ContentFlagByte
-from Models.SubackPayload import c_SubackPayload
-from Models.SubscribePayload import c_SubscribePayload
 from Models.ConnectPayload import c_ConnectPayload
-from Models.UnsubscribePayload import c_UnSubscribePayload
 from MQTTHelper import c_MQTTHelper
 class c_ConnectMapper():
     Helper = c_MQTTHelper()
     hexPacket = list()
 
-    #Generates a connect client 
+    #Generates a connect client and mapps it to an c_MQTTClient obj
+    #Then we return it to the ClientManager
     def GenereateConnectClient(self,packet):
         self.hexPacket = self.Helper.ConvertDecimalToHex(packet)
         fixheader = c_FixHeader(self.Helper.GetCommand(packet),c_FixHeaderFlags(NULL,NULL,NULL),int(self.hexPacket[1],16))
@@ -30,6 +27,10 @@ class c_ConnectMapper():
         return client
 
 
+    #TODO Generate payload dose not work in case of usernameflag is not set.. LOOK IN TO THIS
+
+    #Generats the payload for the connect client
+    #Mapps it and returns c_ConnectPayload obj
     def GenerateConnectPayload(self,packet,varibleheader):
         clientIdLenght = self.CombindInt(packet,2)
         clientId = self.GetString(packet,clientIdLenght)
@@ -39,6 +40,7 @@ class c_ConnectMapper():
         password = self.GetString(packet,passwordLenght)
         return c_ConnectPayload(clientIdLenght,clientId,usernameLenght,username,passwordLenght,password)
 
+    #Gets the payload lenght based on the packet and varibleheader
     def GetPayloadLenght(self,packet,lenght,varibleheader:c_VariableHeader):
         newLenght = 0
         if varibleheader._ConnectHeader._ContentFlagByte.UsernameFlag == True:
@@ -47,6 +49,9 @@ class c_ConnectMapper():
             self.Helper.RemoveFromPacket(self.hexPacket,lenght)
         return newLenght
 
+    #Returns a string value based on the lenght
+    #Lenght determens how much of the packet we would like from start of the packet
+    #Removes the part of the packet we converted
     def GetString(self,packet,lenght):
         byte = []
         for x  in range(lenght):
@@ -55,11 +60,16 @@ class c_ConnectMapper():
         self.Helper.RemoveFromPacket(self.hexPacket,lenght)
         return temp
 
+    #Converts the packet to int and returns it
+    #Removes the part of the packet we converted
     def GetLenght(self,packet):
         lenght = int(packet,16)
         self.Helper.RemoveFromPacket(self.hexPacket,NULL)
         return lenght
 
+    #Retusn an integer based on the packet and lenght
+    #Lenght determens how much of the packet we wont to combind
+    #Removes the part of the packet we converted
     def CombindInt(self,packet,lenght):
         newLenght = 0
         for i in range(0,lenght):
