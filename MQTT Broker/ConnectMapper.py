@@ -17,7 +17,8 @@ class c_ConnectMapper():
     Helper = c_MQTTHelper()
     hexPacket = list()
 
-    def GenereateConnectUser(self,packet):
+    #Generates a connect client 
+    def GenereateConnectClient(self,packet):
         self.hexPacket = self.Helper.ConvertDecimalToHex(packet)
         fixheader = c_FixHeader(self.Helper.GetCommand(packet),c_FixHeaderFlags(NULL,NULL,NULL),int(self.hexPacket[1],16))
         self.hexPacket = self.Helper.RemoveFromPacket(self.hexPacket,2)
@@ -52,8 +53,6 @@ class c_ConnectMapper():
             byte.append(int(packet[x],16))
         temp = bytes(byte).decode('utf-8')
         self.Helper.RemoveFromPacket(self.hexPacket,lenght)
-        print("In GetString")
-        print(temp)
         return temp
 
     def GetLenght(self,packet):
@@ -66,7 +65,6 @@ class c_ConnectMapper():
         for i in range(0,lenght):
             newLenght += int(packet[i],16)
         self.Helper.RemoveFromPacket(self.hexPacket,lenght)
-        print(newLenght)
         return newLenght
 
     #Checks through an arry of the bit values that are set in the will flags

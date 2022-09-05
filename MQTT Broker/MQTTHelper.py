@@ -1,41 +1,21 @@
 from asyncio.windows_events import NULL
+from struct import pack
 class c_MQTTHelper:
-    def ConvertHexToUtf(self,packet):
-        return
-    
+
+    #Converts string hex format to decimal
     def ConvertHexToDecimal(self,packet):
         decimalPacket = []
         for data in packet:
             decimalPacket.append(data)
         return decimalPacket
 
-    def ConvertUtfToDeciaml(self,packet):
-        return
-
+    #Converts Decimal packet to string in hex format
     def ConvertDecimalToHex(self,packet):
         hexPacket = []
         for data in packet:
             hexPacket.append(hex(data))
         return hexPacket
 
-    def ConvertDecimalToUtf(self,packet):
-        return
-
-    def ConvertUtfToHex(self,packet):
-        print("MQTTHelper: " + packet)
-        hexPacket = []
-        for i, data in enumerate(packet):
-            hexPacket.append(data)
-        print("string builder: " + c_MQTTHelper.StringBuilder(self,hexPacket))
-        print(hexPacket)
-        return hexPacket
-    
-    def StringBuilder(self,packet):
-        tempString = ""
-        for item in packet:
-            tempString += item
-        return tempString
-    
     #Incase of default value, disconnect client from the broker
     def GetCommand(self,packet):
         hex = self.ConvertDecimalToHex(packet)[0]
@@ -78,5 +58,39 @@ class c_MQTTHelper:
         else:
             packet.pop(0)
         return packet
+    
+    #Get the lenght of the packet
+    #Lenght determens how much of the packet u want from start pos of the packet
+    def GetLenght(self,packet,lenght):
+        newLenght = 0
+        for i in range(1,lenght):
+            newLenght += int(packet[i],16)
+        return newLenght
 
+    #Get the client name of a packet in string format
+    def GetClientName(self,packet):
+        clientID = ""
+        command = self.GetCommand(packet)
+        hexPacket = self.ConvertDecimalToHex(packet)
+        identifyer = 0
+        clientIdLenght = 0
+        if command == "Connect":
+            self.RemoveFromPacket(hexPacket,2)
+            PNLenght = self.GetLenght(hexPacket,2)
+            print(PNLenght)
+            identifyer = PNLenght + 6
+            self.RemoveFromPacket(hexPacket,identifyer)
+            clientIdLenght = self.GetLenght(hexPacket,2)
+            self.RemoveFromPacket(hexPacket,2)
+            clientID = self.GetClientId(hexPacket,clientIdLenght)
+            
+        return clientID
+
+    #Gets the client id from the packet and returns it in a string array
+    def GetClientId(self,packet,lenght):
+        byte = []
+        for x  in range(lenght):
+            byte.append(int(packet[x],16))
+        temp = bytes(byte).decode('utf-8')
+        return temp
 

@@ -1,11 +1,16 @@
 from ClientManager import c_ClientManager
 from MQTTHelper import c_MQTTHelper
+from Models.Client import c_MQTTClient
 class c_MQTTService:
     MQTTHelper = c_MQTTHelper()
     ClientManager = c_ClientManager()
     
     def ValidateConnect(self,packet):
-        self.ClientManager.GenerateUser(packet)
+        self.ClientManager.GenerateClient(packet)
+        clientID = self.MQTTHelper.GetClientName(packet)
+        print(clientID)
+        client = self.ClientManager.GetClientByID(clientID)
+        print(c_MQTTClient(client)._MQTTPacket._Payload._ConnectPayload.ClientID)
         #connectPakcet = []
         #print("Inside validateConnect")
         #print(packet)
