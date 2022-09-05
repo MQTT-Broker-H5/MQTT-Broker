@@ -13,6 +13,8 @@ from MQTTHelper import c_MQTTHelper
 from Models.Client import c_MQTTClient
 import socket
 from _thread import *
+
+
 class c_Server:
     host = '0.0.0.0'
     port = 8000
@@ -50,7 +52,7 @@ class c_Server:
                     self.clients.remove(connection)
                    
                 elif(cmd == 'Connect' and  connection in self.clients):
-                    self.MQTTService.ValidateConnect(data)
+                    #self.MQTTService.ValidateConnect(data)
                     self.AcceptConnection(connection)
 
                 elif cmd == "Wrong input":
@@ -60,7 +62,7 @@ class c_Server:
                     self.SendHeartbeat(connection)
                
 
-            except:
+            except error as err:
                 connection.close()
             
 

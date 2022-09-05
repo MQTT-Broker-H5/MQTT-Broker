@@ -21,7 +21,7 @@ class c_ClientManager:
 
     pass
 
-    def GetUser(self):
+    def GetUsers(self):
         return self.ClientList
     
     def GetUserbyID(self, clientID : str) :
