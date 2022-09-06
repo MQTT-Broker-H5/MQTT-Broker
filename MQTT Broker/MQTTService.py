@@ -8,18 +8,55 @@ class c_MQTTService:
     def ValidateConnect(self,packet):
         self.ClientManager.GenerateClient(packet)
         clientID = self.MQTTHelper.GetClientName(packet)
-        print(clientID)
         client = self.ClientManager.GetClientByID(clientID)
-        print(c_MQTTClient(client)._MQTTPacket._Payload._ConnectPayload.ClientID)
-        #connectPakcet = []
-        #print("Inside validateConnect")
-        #print(packet)
-        #connectPakcet.append(self.GetCommand(hexArray[0]))
-        #self.VlaidatePacketLenght(int(hexArray[1],16),len(hexArray) - 2)
-        #self.ValidateVaribleHeader(hexArray)
+        if self.ValidateVariableHeader(client) != True:
+            return False
+
+        return True
+
+    def ValidateVariableHeader(self, client:c_MQTTClient):
+        print("In validate header")
+        if self.ValidateProtocolName(client) != True:
+            return False
+        if self.ValidateProtocolLeven(client) != True:
+            return False
+        if self.ValidateFlags(client) != True:
+            return False
+
+
+        pass
+
+    def ValidateProtocolName(self,client:c_MQTTClient):
+        print("In validate protocol name")
+        lenght = client._MQTTPacket._VaribleHeader._ConnectHeader.ProtocolNameLenght
+        name = client._MQTTPacket._VaribleHeader._ConnectHeader.ProtocolName
+
+        if len(name) != lenght:
+            return False
+        return True
+
+    def ValidateProtocolLeven(self,client:c_MQTTClient):
+        if client._MQTTPacket._VaribleHeader._ConnectHeader.ProtocolLevel != 4:
+            return False
+        return True
+
+    def ValidateFlags(self,client:c_MQTTClient):
+        flags = client._MQTTPacket._VaribleHeader._ConnectHeader._ContentFlagByte
+        if flags.CleanSession == False:
+            #Do not remove the client session if the client disconnect
+            #If the cleansSession is 0
+            print("worked")
+        elif flags.CleanSession == True:
+            #Discard old session and start a new session
+            #Do not save data in case of reconnect
+            print("worked")
+        if flags.Willflag == True:
+            if
+
+
         pass
     
-    def ValidateVaribleHeader(self,packet):
+    def ValidateVaribleHeader2(self,packet):
         PNPacket = []
         PNLenght = int(packet[2],16)+ int(packet[3],16)
         for x  in range(1,PNLenght + 1):
@@ -33,18 +70,6 @@ class c_MQTTService:
     # Incase of false return, disconnect client form the broker
     def VlaidatePacketLenght(self,contentLenght,packetLenght):
         if contentLenght != packetLenght:
-            return False
-        return True
-    
-    # Incase of false return, disconnect client form the broker
-    def ValidateProtocolName(self,lenght,packet):
-        if lenght != len(packet):
-            return False
-        return True
-
-    # Incase of false return, disconnect client form the broker
-    def ValidateProtocolLeven(self,level):
-        if level != "0x4":
             return False
         return True
 
