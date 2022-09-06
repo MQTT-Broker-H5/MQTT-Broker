@@ -1,10 +1,13 @@
 from asyncio.windows_events import NULL
+from multiprocessing.connection import Client
 from ConnectMapper import c_ConnectMapper
 from MQTTHelper import c_MQTTHelper
 from Models.Client import c_MQTTClient
 from _thread import *
+from asyncio.windows_events import NULL
+
 class c_ClientManager:
-    ClientList = list()
+    ClientList = list() 
     Helper = c_MQTTHelper()
     cMapper = c_ConnectMapper()
 
@@ -30,8 +33,10 @@ class c_ClientManager:
                 if self.ClientList[i]._MQTTPacket._Payload._ConnectPayload.ClientID == client._MQTTPacket._Payload._ConnectPayload._ClientID:
                     self.ClientList.pop(i)
                     self.ClientList.append(client)
-
         except error as er:
             print(er.args)
                 
+
+    def GetUsers(self):
+        return self.ClientList
 

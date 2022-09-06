@@ -2,16 +2,20 @@ from asyncio.windows_events import NULL
 from concurrent.futures import thread
 from contextlib import nullcontext
 from http import client
+import ipaddress
 from pydoc import cli
 from re import X
 from socketserver import DatagramRequestHandler
 from sqlite3 import connect
+import string
 from MQTTService import c_MQTTService
 from MQTTHelper import c_MQTTHelper
 import socket
 from _thread import *
+
+
 class c_Server:
-    host = '127.0.0.1'
+    host = '0.0.0.0'
     port = 8000
     ThreadCount = 0
     clients = list()
@@ -19,6 +23,15 @@ class c_Server:
     MQTTHelper = c_MQTTHelper()
 
     def __init__(self):
+        self.start_server(self.host, self.port)
+
+    def __init__(self, port : int):
+        
+        hostname = socket.gethostname()    
+        self.host = socket.gethostbyname(hostname) 
+        self.port = int(port)
+        print("ip:" + str(self.host) +  "\nPort:" + str(self.port))
+
         self.start_server(self.host, self.port)
 
     def client_handler(self,connection: socket.socket):
@@ -41,6 +54,8 @@ class c_Server:
                 elif(cmd == 'Connect' and  connection in self.clients):
                     if self.MQTTService.ValidateConnect(data) != True:
                         self.disconnect()
+                    self.AcceptConnection(connection)
+
 
                 elif cmd == "Wrong input":
                     self.disconnect(connection)
@@ -49,7 +64,7 @@ class c_Server:
                     self.SendHeartbeat(connection)
                
 
-            except:
+            except error as err:
                 connection.close()
             
 

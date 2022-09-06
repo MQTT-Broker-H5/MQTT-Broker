@@ -1,4 +1,6 @@
 from asyncio.windows_events import NULL
+from contextlib import nullcontext
+
 from struct import pack
 class c_MQTTHelper:
 
@@ -34,6 +36,8 @@ class c_MQTTHelper:
             tempStr = "Heartbeat"
         elif hex == "x02":
             tempStr = "Ping"
+        elif hex == "0x20":
+            return "Connack"
         return tempStr
 
     #We are using bitwise operator left shifting to check if the bit is set
@@ -54,9 +58,15 @@ class c_MQTTHelper:
         if ammount != NULL:
             for i in range(0, ammount):
                 i = 0
-                packet.pop(i)
+                try:
+                    packet.pop(i)
+                except: 
+                    continue
         else:
-            packet.pop(0)
+            try:
+                packet.pop(0)
+            except :
+                return NULL
         return packet
     
     #Get the lenght of the packet

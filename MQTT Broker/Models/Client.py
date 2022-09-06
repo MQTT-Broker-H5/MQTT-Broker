@@ -7,7 +7,12 @@ class c_MQTTClient:
         return self._MQTTPacket
     def _Set_MQTTPacket(self,value):
         self._MQTTPacket = value
+        try:
+            b = "23" + 4
+        except error as err:
+            return
 
     MQTTPacket = property(
         fget= _Get_MQTTPacket,
         fset= _Set_MQTTPacket)
+    
