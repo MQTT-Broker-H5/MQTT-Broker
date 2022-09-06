@@ -3,6 +3,7 @@ from multiprocessing.connection import Client
 from ConnectMapper import c_ConnectMapper
 from MQTTHelper import c_MQTTHelper
 from Models.Client import c_MQTTClient
+from _thread import *
 from asyncio.windows_events import NULL
 
 class c_ClientManager:
@@ -10,23 +11,32 @@ class c_ClientManager:
     Helper = c_MQTTHelper()
     cMapper = c_ConnectMapper()
 
-    
-    #Metode der returnere en liste af c_MQTTClient
-    #map will topic
-
-    def GenerateUser(self,packet):
+    #Creats a new client based on the packet
+    #Add it to the clientlist
+    def GenerateClient(self,packet):
         command = self.Helper.GetCommand(packet)
         if command == "Connect":
-            self.ClientList.append(self.cMapper.GenereateConnectUser(packet))
+            self.ClientList.append(self.cMapper.GenereateConnectClient(packet))
 
-    pass
+    #Get a specifik client from the clientList
+    def GetClientByID(self, clientID):
+        for i in range(len(self.ClientList)):
+            if self.ClientList[i]._MQTTPacket._Payload._ConnectPayload.ClientID == clientID:
+                return self.ClientList[i]
+        else:
+            return "No match"
+
+
+    def UpdateClientByID(self,client:c_MQTTClient):
+        try:
+            for i in range(len(self.ClientList)):
+                if self.ClientList[i]._MQTTPacket._Payload._ConnectPayload.ClientID == client._MQTTPacket._Payload._ConnectPayload._ClientID:
+                    self.ClientList.pop(i)
+                    self.ClientList.append(client)
+        except error as er:
+            print(er.args)
+                
 
     def GetUsers(self):
         return self.ClientList
-    
-    def GetUserbyID(self, clientID : str) :
-        for x in self.ClientList :  
-            c = (c_MQTTClient(self.ClientList[x]))._MQTTPacket._Payload._ConnectPayload.ClientID
-            if( c == clientID) :
-                return c 
 

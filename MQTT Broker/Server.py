@@ -10,7 +10,6 @@ from sqlite3 import connect
 import string
 from MQTTService import c_MQTTService
 from MQTTHelper import c_MQTTHelper
-from Models.Client import c_MQTTClient
 import socket
 from _thread import *
 
@@ -46,14 +45,17 @@ class c_Server:
                     self.disconnect(connection)
                     self.clients.remove(connection)
                     
+
                 cmd = self.MQTTHelper.GetCommand(data)
 
                 if cmd == "Disconnect": 
                     self.clients.remove(connection)
                    
                 elif(cmd == 'Connect' and  connection in self.clients):
-                    #self.MQTTService.ValidateConnect(data)
+                    if self.MQTTService.ValidateConnect(data) != True:
+                        self.disconnect()
                     self.AcceptConnection(connection)
+
 
                 elif cmd == "Wrong input":
                     self.disconnect(connection)
