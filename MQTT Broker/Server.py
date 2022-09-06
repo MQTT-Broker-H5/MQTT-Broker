@@ -1,11 +1,4 @@
 from asyncio.windows_events import NULL
-from concurrent.futures import thread
-from contextlib import nullcontext
-from http import client
-from pydoc import cli
-from re import X
-from socketserver import DatagramRequestHandler
-from sqlite3 import connect
 from MQTTService import c_MQTTService
 from MQTTHelper import c_MQTTHelper
 import socket
@@ -27,7 +20,6 @@ class c_Server:
         while True:
             try:
                 data = connection.recv(2048)
-
                 if not data:
                     self.disconnect(connection)
                     self.clients.remove(connection)

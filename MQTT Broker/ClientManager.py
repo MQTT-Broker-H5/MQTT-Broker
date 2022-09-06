@@ -18,20 +18,9 @@ class c_ClientManager:
     #Get a specifik client from the clientList
     def GetClientByID(self, clientID):
         for i in range(len(self.ClientList)):
-            if self.ClientList[i]._MQTTPacket._Payload._ConnectPayload.ClientID == clientID:
+            if self.ClientList[i]._MQTTPacket._Payload._ConnectPayload._ClientID == clientID:
                 return self.ClientList[i]
         else:
             return "No match"
-
-
-    def UpdateClientByID(self,client:c_MQTTClient):
-        try:
-            for i in range(len(self.ClientList)):
-                if self.ClientList[i]._MQTTPacket._Payload._ConnectPayload.ClientID == client._MQTTPacket._Payload._ConnectPayload._ClientID:
-                    self.ClientList.pop(i)
-                    self.ClientList.append(client)
-
-        except error as er:
-            print(er.args)
                 
 

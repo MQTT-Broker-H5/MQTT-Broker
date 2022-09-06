@@ -1,4 +1,6 @@
 from asyncio.windows_events import NULL
+import binascii
+import os
 from Models.MQTTPacket import c_MQTTPacket
 from Models.Client import c_MQTTClient
 from Models.FixHeader import c_FixHeader
@@ -25,15 +27,14 @@ class c_ConnectMapper():
         client = c_MQTTClient(c_MQTTPacket(fixheader,varibleheader,payload))
         return client
 
-
-    #TODO Generate payload dose not work in case of usernameflag is not set.. LOOK IN TO THIS
-    #TODO If clientID == 0 Generate random id
-
     #Generats the payload for the connect client
     #Mapps it and returns c_ConnectPayload obj
     def GenerateConnectPayload(self,packet,varibleheader:c_VariableHeader):
         clientIdLenght = self.CombindInt(packet,2)
-        clientId = self.GetString(packet,clientIdLenght)
+        if clientIdLenght == 0:
+            clientId = self.GenerateUniqClientID()
+        else:
+            clientId = self.GetString(packet,clientIdLenght)
         if varibleheader._ConnectHeader._ContentFlagByte.Willflag == True:
             willTopicLenght = self.CombindInt(packet,2)
             willTopic = self.GetString(packet,willTopicLenght)
@@ -46,6 +47,12 @@ class c_ConnectMapper():
             passwordLenght = self.CombindInt(packet,2)
             password = self.GetString(packet,passwordLenght)
         return c_ConnectPayload(clientIdLenght,clientId,willTopicLenght,willTopic,willMessageLenght,willMessage,usernameLenght,username,passwordLenght,password)
+
+    #Generates a uniq clientID if none is presented in the payload
+    def GenerateUniqClientID(self):
+        clientID = "MQTT_" + str(binascii.hexlify(os.urandom(8)).decode('utf-8'))
+        return clientID
+
 
     #Returns a string value based on the lenght
     #Lenght determens how much of the packet we would like from start of the packet
@@ -89,6 +96,9 @@ class c_ConnectMapper():
             Willflag = True
         elif setFlags[2] != 1:
             Willflag = False
+            setFlags[3] = 0
+            setFlags[4] = 0
+            setFlags[5] = 0
         if setFlags[3] == 1 and setFlags[4] != 1:
             WillQoS = 1
         elif setFlags[3] != 1 and setFlags[4] == 1:
@@ -100,11 +110,12 @@ class c_ConnectMapper():
         elif setFlags[5] != 1:
             WillRetain = False
         if setFlags[6] == 1:
-            PasswordFlag = True
-        elif setFlags[6] != 1:
-            PasswordFlag = False
-        if setFlags[7] == 1:
             UsernameFlag = True
-        elif setFlags[7] != 1:
+        elif setFlags[6] != 1:
             UsernameFlag = False
+            setFlags[7] = 0
+        if setFlags[7] == 1:
+            PasswordFlag = True
+        elif setFlags[7] != 1:
+            PasswordFlag = False
         return c_ContentFlagByte(CleanSession,Willflag,WillQoS,WillRetain,PasswordFlag,UsernameFlag)
