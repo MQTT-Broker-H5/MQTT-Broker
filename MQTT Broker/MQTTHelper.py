@@ -1,5 +1,7 @@
 from asyncio.windows_events import NULL
 from contextlib import nullcontext
+from datetime import datetime
+from operator import truediv
 
 from struct import pack
 class c_MQTTHelper:
@@ -103,4 +105,27 @@ class c_MQTTHelper:
             byte.append(int(packet[x],16))
         temp = bytes(byte).decode('utf-8')
         return temp
+
+    def ConvertUtfToHex(self, utf : str):
+        hexPacket = []
+        test = utf.encode()
+
+        for element in utf:
+            hexPacket.append(hex(ord(element)))
+
+  
+
+        return hexPacket
+
+
+
+
+    def KeepAliveChecker(self, KeepAlive : int, LastPackage : datetime):
+        time = datetime.now() - LastPackage
+        secounds = time.total_seconds()
+        if(time.total_seconds() <= (KeepAlive * 1.5)):
+            return True
+        return False
+
+
 

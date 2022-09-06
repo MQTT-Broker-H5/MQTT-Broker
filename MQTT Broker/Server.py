@@ -1,24 +1,29 @@
 from asyncio.windows_events import NULL
 from concurrent.futures import thread
 from contextlib import nullcontext
+from datetime import datetime
 from http import client
 import ipaddress
+from multiprocessing.connection import Client
+from operator import truediv
 from pydoc import cli
+from queue import Empty
 from re import X
 from socketserver import DatagramRequestHandler
 from sqlite3 import connect
 import string
+from struct import pack
+from unittest.mock import NonCallableMagicMock
 from MQTTService import c_MQTTService
 from MQTTHelper import c_MQTTHelper
 import socket
 from _thread import *
-
+from Models.Client import c_MQTTClient
 
 class c_Server:
     host = '0.0.0.0'
     port = 8000
     ThreadCount = 0
-    clients = list()
     MQTTService = c_MQTTService()
     MQTTHelper = c_MQTTHelper()
 
@@ -36,47 +41,71 @@ class c_Server:
 
     def client_handler(self,connection: socket.socket):
         
-        self.clients.append(connection)
+      
+        lastPacket = None
+        clientID = None
+        
         while True:
             try:
+
                 data = connection.recv(2048)
 
-                if not data:
-                    self.disconnect(connection)
-                    self.clients.remove(connection)
+                if data is None or data is b'':
+                    connection.close()
                     
+                    continue
 
                 cmd = self.MQTTHelper.GetCommand(data)
 
+                if lastPacket is None:
+                    lastPacket = datetime.now()
+                
+                    
+
                 if cmd == "Disconnect": 
-                    self.clients.remove(connection)
+                    pass
                    
-                elif(cmd == 'Connect' and  connection in self.clients):
-                    if self.MQTTService.ValidateConnect(data) != True:
-                        self.disconnect()
-                    self.AcceptConnection(connection)
+                elif(cmd == 'Connect'):
+                    if self.MQTTService.ValidateConnect(data, connection) != True:
+                        self.disconnect(clientID)
+                        continue #Kill thread
+                    clientID = self.MQTTHelper.GetClientName(data)
+                    self.AcceptConnection(clientID)
 
 
                 elif cmd == "Wrong input":
-                    self.disconnect(connection)
+                    self.disconnect(clientID)
                 
                 elif cmd == "Ping":
-                    self.SendHeartbeat(connection)
-               
+                    print("ping")
+                    if self.CheckKeepAlive(lastPacket, clientID) is True:
+                        self.SendHeartbeat(clientID)
+                        lastPacket = datetime.now()
+                        print('pong')
+                        #lav et countdown
+                    else:
+                        self.CloseCon(clientID)
+                        self.disconnect(clientID)
+                        thread._python_exit               
 
-            except error as err:
-                connection.close()
+            except:
+                self.sendLastWill(clientID)
+                return
             
+    def CheckKeepAlive(self, lastPacketTime : datetime, clientID):
+        keepalive = self.MQTTService.GetKeepAlive(clientID)
+        if self.MQTTHelper.KeepAliveChecker(keepalive, lastPacketTime) is False :
+            return False
+        return True
+
+
 
     def accept_connections(self, ServerSocket):
         while True:
-        
             Client, address = ServerSocket.accept()
             print('Connected to: ' + address[0] + ':' + str(address[1]))
-
             start_new_thread(self.client_handler, (Client, ))
-
-
+    
     def start_server(self, host, port):
     
         c = int(32)
@@ -96,21 +125,42 @@ class c_Server:
                  print(len(self.clients))
 
 
+    def SendMessage(self, clientID, message):
+        try:
+            client = self.MQTTService.ClientManager.GetClientByID(clientID)
+            client._socket.send(message)
+        except:
+            pass
 
-    def AcceptConnection(self,  clientCon : socket.socket):
-       clientCon.send(b'\x20\x02\x00\x00')
+    def CloseCon(self, clientID):
+        client : c_MQTTClient = self.MQTTService.ClientManager.GetClientByID(clientID) 
+        client._socket.close()
+
+    def AcceptConnection(self,  ClientID):
+        self.SendMessage(ClientID, b'\x20\x02\x00\x00')
        
-    def SendHeartbeat(self, clientCon : socket.socket):
-            clientCon.send(b'\xD0\x00')
+    def SendHeartbeat(self, clientID):
+        self.SendMessage(clientID, b'\xD0\x00')
         
-    def disconnect(self,  clientCon: socket.socket):
-        clientCon.close()
-        self.clients.remove(clientCon)
+    def disconnect(self, clientID):
+        self.sendLastWill(clientID)
+        
 
-    def sendLastWill(self, client : socket.socket):
-         for count, sel in enumerate(self.clients) :
-            if(sel == client):
+    def sendLastWill(self, clientID):
+        lastWill, topic = self.MQTTService.GetLastWill(clientID)
+        clients = self.MQTTService.ClientManager.GetClientByTopic(topic)
+        for count, sel in enumerate(clients):
+            mqttClient : c_MQTTClient = sel 
+            if mqttClient._MQTTPacket._Payload._ConnectPayload._ClientID == clientID:
                 continue
             else:
-                sel : socket.socket
-                sel.send('')
+                
+                # my_str = "hello world"
+                # my_str_as_bytes = str.encode(lastwi)
+                #ls =  self.MQTTHelper.ConvertUtfToHex(lastWill)       
+                mqttClient._socket.send(lastWill.encode())
+                
+
+         
+
+        
