@@ -12,10 +12,11 @@ except :
 def Main():
 
     if(len(sys.argv) > 1):
-        server = c_Server(sys.argv[1])
+        server = c_Server(sys.argv[1], sys.argv[2])
     else:
-        server = c_Server()
+        server = c_Server(1883, '127.0.0.1')
         
+
 
 Main()
 

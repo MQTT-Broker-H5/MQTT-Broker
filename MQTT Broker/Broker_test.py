@@ -1,6 +1,4 @@
 from array import array
-from asyncio.windows_events import NULL
-from contextlib import nullcontext
 from ClientManager import c_ClientManager
 from MQTTHelper import c_MQTTHelper
 from MQTTService import c_MQTTService
@@ -19,17 +17,17 @@ class Broker_test(unittest.TestCase):
        self.assertIs(amount, 0, "Contains 0")
 
     def test_AddUser(self) :
-        self.mService.ClientManager.GenerateUser(self.connect)
+        self.mService.ClientManager.GenerateClient(self.connect)
         amount = len(self.mService.ClientManager.ClientList)
         self.assertIs(amount, 1, "contains 1")
 
     def test_GetUserByID(self) : 
         user = self.mService.ClientManager.GetUserbyID('mqttx_69d85a39')
-        self.assertIsNot(user, NULL, "user found")
+        self.assertIsNot(user, None, "user found")
 
-    def test_GenerateUser (self):
-        user = self.mService.ClientManager.GenerateUser(self.connect)
-        self.assertIsNot(user, NULL, "Removed user from list")
+    def test_GenerateClient(self):
+        user = self.mService.ClientManager.GenerateClient(self.connect)
+        self.assertIsNot(user, None, "Removed user from list")
 
     def test_DecimalToToHex(self):
         hex = self.clientManager.Helper.ConvertDecimalToHex(self.connect)

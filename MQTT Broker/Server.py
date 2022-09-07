@@ -8,7 +8,7 @@ from Models.Client import c_MQTTClient
 
 class c_Server:
     host = '0.0.0.0'
-    port = 8000
+    port = 1883
     ThreadCount = 0
     MQTTService = c_MQTTService()
     MQTTHelper = c_MQTTHelper()
@@ -16,10 +16,14 @@ class c_Server:
     def __init__(self):
         self.start_server(self.host, self.port)
 
-    def __init__(self, port : int):
+    def __init__(self, port : int, host : str):
         
         hostname = socket.gethostname()    
         self.host = socket.gethostbyname(hostname) 
+        if(host is not None and self.host is not host):
+            self.host = host
+        
+        
         self.port = int(port)
         print("ip:" + str(self.host) +  "\nPort:" + str(self.port))
 
@@ -39,7 +43,6 @@ class c_Server:
                 if data is None or data is b'':
                     connection.close()
 
-                    
                     continue
 
                 cmd = self.MQTTHelper.GetCommand(data)
@@ -76,7 +79,7 @@ class c_Server:
                         thread._python_exit               
 
             except:
-                self.sendLastWill(clientID)
+                #self.sendLastWill(clientID)
                 return
             
     def CheckKeepAlive(self, lastPacketTime : datetime, clientID):
@@ -141,6 +144,16 @@ class c_Server:
             if mqttClient._MQTTPacket._Payload._ConnectPayload._ClientID == clientID:
                 continue
             else:
+                
+                # publish = bytearray(b'\x60\x00')
+                # publish.append(len(lastWill))   
+                # self.MQTTHelper.AppendBytes(lastWill, publish)
+                # multiplier = 1
+                # value = 0
+                # # my_str = "hello world"
+                # # my_str_as_bytes = str.encode(lastwi)
+                # #ls =  self.MQTTHelper.ConvertUtfToHex(lastWill)       
+                # mqttClient._socket.send(lastWill.encode())
                 pass
 
          

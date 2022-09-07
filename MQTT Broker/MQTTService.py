@@ -1,5 +1,3 @@
-from operator import truediv
-from struct import pack
 from ClientManager import c_ClientManager
 from MQTTHelper import c_MQTTHelper
 from Models.Client import c_MQTTClient

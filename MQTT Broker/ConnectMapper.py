@@ -1,4 +1,3 @@
-from asyncio.windows_events import NULL
 import binascii
 import os
 from Models.MQTTPacket import c_MQTTPacket
@@ -19,11 +18,11 @@ class c_ConnectMapper():
     #Then we return it to the ClientManager
     def GenereateConnectClient(self,packet, socket):
         self.hexPacket = self.Helper.ConvertDecimalToHex(packet)
-        fixheader = c_FixHeader(self.Helper.GetCommand(packet),c_FixHeaderFlags(NULL,NULL,NULL),int(self.hexPacket[1],16))
+        fixheader = c_FixHeader(self.Helper.GetCommand(packet),c_FixHeaderFlags(None,None,None),int(self.hexPacket[1],16))
         self.hexPacket = self.Helper.RemoveFromPacket(self.hexPacket,2)
         PNlenght = self.CombindInt(self.hexPacket,2)
-        varibleheader = c_VariableHeader(c_ConnectHeader(PNlenght,self.GetString(self.hexPacket,PNlenght),self.GetLenght(self.hexPacket[0]),self.GetContentFlagByte(self.hexPacket),self.CombindInt(self.hexPacket,2)),NULL,NULL,NULL)
-        payload = c_Payload(NULL,NULL,NULL,self.GenerateConnectPayload(self.hexPacket,varibleheader))
+        varibleheader = c_VariableHeader(c_ConnectHeader(PNlenght,self.GetString(self.hexPacket,PNlenght),self.GetLenght(self.hexPacket[0]),self.GetContentFlagByte(self.hexPacket),self.CombindInt(self.hexPacket,2)),None,None,None)
+        payload = c_Payload(None,None,None,self.GenerateConnectPayload(self.hexPacket,varibleheader))
         client = c_MQTTClient(c_MQTTPacket(fixheader,varibleheader,payload), socket)
         return client
 
@@ -37,21 +36,20 @@ class c_ConnectMapper():
         else:
             clientId = self.GetString(packet,clientIdLenght)
 
-        clientId = self.GetString(packet,clientIdLenght)
         usernameLenght = 0
         passwordLenght = 0
         username = ""
         password = ""
 
-        if varibleheader._ConnectHeader._ContentFlagByte.Willflag == True:
+        if varibleheader._ConnectHeader._ContentFlagByte._WillFlag == True:
             willTopicLenght = self.CombindInt(packet,2)
             willTopic = self.GetString(packet,willTopicLenght)
             willMessageLenght = self.CombindInt(packet,2)
             willMessage = self.GetString(packet,willMessageLenght)
-        if varibleheader._ConnectHeader._ContentFlagByte.UsernameFlag == True:
+        if varibleheader._ConnectHeader._ContentFlagByte._UsernameFlag == True:
             usernameLenght = self.CombindInt(packet,2)
             username = self.GetString(packet,usernameLenght)
-        if varibleheader._ConnectHeader._ContentFlagByte.PasswordFlag == True:
+        if varibleheader._ConnectHeader._ContentFlagByte._PassworFlag == True:
             passwordLenght = self.CombindInt(packet,2)
             password = self.GetString(packet,passwordLenght)
         return c_ConnectPayload(clientIdLenght,clientId,willTopicLenght,willTopic,willMessageLenght,willMessage,usernameLenght,username,passwordLenght,password)
@@ -77,7 +75,7 @@ class c_ConnectMapper():
     #Removes the part of the packet we converted
     def GetLenght(self,packet):
         lenght = int(packet,16)
-        self.Helper.RemoveFromPacket(self.hexPacket,NULL)
+        self.Helper.RemoveFromPacket(self.hexPacket,None)
         return lenght
 
     #Retusn an integer based on the packet and lenght
@@ -95,7 +93,7 @@ class c_ConnectMapper():
     def GetContentFlagByte(self,packet):
         WillQoS = 0
         setFlags = self.Helper.LeftBitwiseCheckFlags(int(packet[0],16))
-        self.Helper.RemoveFromPacket(self.hexPacket,NULL)
+        self.Helper.RemoveFromPacket(self.hexPacket,None)
         if setFlags[1] == 1:
             CleanSession = True
         elif setFlags[1] != 1:

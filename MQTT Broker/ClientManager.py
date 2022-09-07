@@ -1,12 +1,7 @@
-from asyncio.windows_events import NULL
-from multiprocessing.connection import Client
-from operator import truediv
-from os import remove
 from ConnectMapper import c_ConnectMapper
 from MQTTHelper import c_MQTTHelper
 from Models.Client import c_MQTTClient
 from _thread import *
-from asyncio.windows_events import NULL
 
 class c_ClientManager:
     ClientList = list() 

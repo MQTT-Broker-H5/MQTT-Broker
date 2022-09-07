@@ -1,10 +1,4 @@
-from ast import Bytes
-from asyncio.windows_events import NULL
-from contextlib import nullcontext
 from datetime import datetime
-from decimal import Decimal
-from operator import truediv
-
 from struct import pack
 from unicodedata import decimal
 class c_MQTTHelper:
@@ -60,7 +54,7 @@ class c_MQTTHelper:
     #The remove will happel from 0-ammount
     #If you just want 1 item removed insert null in ammount
     def RemoveFromPacket(self,packet:list,ammount):
-        if ammount != NULL:
+        if ammount != None:
             for i in range(0, ammount):
                 i = 0
                 try:
@@ -71,7 +65,7 @@ class c_MQTTHelper:
             try:
                 packet.pop(0)
             except :
-                return NULL
+                return None
         return packet
     
     #Get the lenght of the packet
