@@ -21,9 +21,9 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ConnectMapper.py" />
     <Compile Include="Models\Client.py" />
     <Compile Include="ClientManager.py" />
-    <Compile Include="ContentFlagByte.py" />
     <Compile Include="Models\ConnackHeader.py" />
     <Compile Include="Models\ConnectHeader.py" />
     <Compile Include="Models\ConnectPayload.py" />
