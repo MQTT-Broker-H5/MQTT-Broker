@@ -17,24 +17,32 @@ class c_ConnectMapper():
 
     #Generates a connect client and mapps it to an c_MQTTClient obj
     #Then we return it to the ClientManager
-    def GenereateConnectClient(self,packet):
+    def GenereateConnectClient(self,packet, socket):
         self.hexPacket = self.Helper.ConvertDecimalToHex(packet)
         fixheader = c_FixHeader(self.Helper.GetCommand(packet),c_FixHeaderFlags(NULL,NULL,NULL),int(self.hexPacket[1],16))
         self.hexPacket = self.Helper.RemoveFromPacket(self.hexPacket,2)
         PNlenght = self.CombindInt(self.hexPacket,2)
         varibleheader = c_VariableHeader(c_ConnectHeader(PNlenght,self.GetString(self.hexPacket,PNlenght),self.GetLenght(self.hexPacket[0]),self.GetContentFlagByte(self.hexPacket),self.CombindInt(self.hexPacket,2)),NULL,NULL,NULL)
         payload = c_Payload(NULL,NULL,NULL,self.GenerateConnectPayload(self.hexPacket,varibleheader))
-        client = c_MQTTClient(c_MQTTPacket(fixheader,varibleheader,payload))
+        client = c_MQTTClient(c_MQTTPacket(fixheader,varibleheader,payload), socket)
         return client
 
     #Generats the payload for the connect client
     #Mapps it and returns c_ConnectPayload obj
     def GenerateConnectPayload(self,packet,varibleheader:c_VariableHeader):
         clientIdLenght = self.CombindInt(packet,2)
+
         if clientIdLenght == 0:
             clientId = self.GenerateUniqClientID()
         else:
             clientId = self.GetString(packet,clientIdLenght)
+
+        clientId = self.GetString(packet,clientIdLenght)
+        usernameLenght = 0
+        passwordLenght = 0
+        username = ""
+        password = ""
+
         if varibleheader._ConnectHeader._ContentFlagByte.Willflag == True:
             willTopicLenght = self.CombindInt(packet,2)
             willTopic = self.GetString(packet,willTopicLenght)
