@@ -8,5 +8,3 @@ class c_MQTTClient:
         self._MQTTPacket = mqtttPacket
         self._socket = socket
                 
-
-
