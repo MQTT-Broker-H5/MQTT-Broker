@@ -1,5 +1,7 @@
 from asyncio.windows_events import NULL
 from multiprocessing.connection import Client
+from operator import truediv
+from os import remove
 from ConnectMapper import c_ConnectMapper
 from MQTTHelper import c_MQTTHelper
 from Models.Client import c_MQTTClient
@@ -13,10 +15,10 @@ class c_ClientManager:
 
     #Creats a new client based on the packet
     #Add it to the clientlist
-    def GenerateClient(self,packet):
+    def GenerateClient(self,packet, socket):
         command = self.Helper.GetCommand(packet)
         if command == "Connect":
-            self.ClientList.append(self.cMapper.GenereateConnectClient(packet))
+            self.ClientList.append(self.cMapper.GenereateConnectClient(packet, socket))
 
     #Get a specifik client from the clientList
     def GetClientByID(self, clientID):
@@ -25,6 +27,25 @@ class c_ClientManager:
                 return self.ClientList[i]
         else:
             return "No match"
+    def GetClientByTopic(self, topic):
+        clients = []
+        for i in range(len(self.ClientList)):
+            try:
+                if self.ClientList[i]._MQTTPacket._Payload._ConnectPayload._WillTopic == topic:
+                    clients.append(self.ClientList[i])
+            except:
+                continue
+        return clients
+        
+
+    def RemoveClient(self, clientId) :
+        try:
+            for i in range(len(self.ClientList)):
+                if self.ClientList[i]._MQTTPacket._Payload._ConnectPayload._ClientID == clientId:
+                    self.ClientList.pop(i)
+                    return True
+        except:
+            return False
 
 
     def UpdateClientByID(self,client:c_MQTTClient):

@@ -1,7 +1,12 @@
+from ast import Bytes
 from asyncio.windows_events import NULL
 from contextlib import nullcontext
+from datetime import datetime
+from decimal import Decimal
+from operator import truediv
 
 from struct import pack
+from unicodedata import decimal
 class c_MQTTHelper:
 
     #Converts string hex format to decimal
@@ -103,4 +108,24 @@ class c_MQTTHelper:
             byte.append(int(packet[x],16))
         temp = bytes(byte).decode('utf-8')
         return temp
+
+    def AppendBytes(self, utf : str, _bytes : bytearray):
+        
+        for element in utf:
+            dec = ord(element)
+            _bytes.append(dec)
+
+        return _bytes
+
+
+
+
+    def KeepAliveChecker(self, KeepAlive : int, LastPackage : datetime):
+        time = datetime.now() - LastPackage
+        secounds = time.total_seconds()
+        if(time.total_seconds() <= (KeepAlive * 1.5)):
+            return True
+        return False
+
+
 
