@@ -13,6 +13,7 @@ from socketserver import DatagramRequestHandler
 from sqlite3 import connect
 import string
 from struct import pack
+from unicodedata import decimal
 from unittest.mock import NonCallableMagicMock
 from MQTTService import c_MQTTService
 from MQTTHelper import c_MQTTHelper
@@ -155,11 +156,16 @@ class c_Server:
                 continue
             else:
                 
-                # my_str = "hello world"
-                # my_str_as_bytes = str.encode(lastwi)
-                #ls =  self.MQTTHelper.ConvertUtfToHex(lastWill)       
-                mqttClient._socket.send(lastWill.encode())
-                
+                # publish = bytearray(b'\x60\x00')
+                # publish.append(len(lastWill))   
+                # self.MQTTHelper.AppendBytes(lastWill, publish)
+                # multiplier = 1
+                # value = 0
+                # # my_str = "hello world"
+                # # my_str_as_bytes = str.encode(lastwi)
+                # #ls =  self.MQTTHelper.ConvertUtfToHex(lastWill)       
+                # mqttClient._socket.send(lastWill.encode())
+                pass
 
          
 

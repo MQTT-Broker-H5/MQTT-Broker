@@ -1,9 +1,12 @@
+from ast import Bytes
 from asyncio.windows_events import NULL
 from contextlib import nullcontext
 from datetime import datetime
+from decimal import Decimal
 from operator import truediv
 
 from struct import pack
+from unicodedata import decimal
 class c_MQTTHelper:
 
     #Converts string hex format to decimal
@@ -106,16 +109,13 @@ class c_MQTTHelper:
         temp = bytes(byte).decode('utf-8')
         return temp
 
-    def ConvertUtfToHex(self, utf : str):
-        hexPacket = []
-        test = utf.encode()
-
+    def AppendBytes(self, utf : str, _bytes : bytearray):
+        
         for element in utf:
-            hexPacket.append(hex(ord(element)))
+            dec = ord(element)
+            _bytes.append(dec)
 
-  
-
-        return hexPacket
+        return _bytes
 
 
 
