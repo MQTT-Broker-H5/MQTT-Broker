@@ -60,6 +60,7 @@ class c_Server:
                         self.disconnect(clientID)
                         continue #Kill thread
                     clientID = self.MQTTHelper.GetClientName(data)
+                    print("Velkommen: " + clientID)
                     self.AcceptConnection(clientID)
 
 

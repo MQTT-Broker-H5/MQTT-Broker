@@ -38,6 +38,10 @@ class c_ConnectMapper():
 
         usernameLenght = 0
         passwordLenght = 0
+        willTopicLenght = 0
+        willMessageLenght = 0
+        willTopic = ""
+        willMessage = ""
         username = ""
         password = ""
 

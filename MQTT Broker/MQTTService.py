@@ -20,7 +20,6 @@ class c_MQTTService:
     #Validates the varibleheader from the connect packet
     #This method only works with connect packet
     def ValidateVariableHeader(self, client:c_MQTTClient):
-        print("In validate header")
         if self.ValidateProtocolName(client) != True:
             return False
         if self.ValidateProtocolLeven(client) != True:
@@ -36,7 +35,6 @@ class c_MQTTService:
         return message, topic
 
     def ValidateProtocolName(self,client:c_MQTTClient):
-        print("In validate protocol name")
         lenght = client._MQTTPacket._VaribleHeader._ConnectHeader._ProtocolNameLenght
         name = client._MQTTPacket._VaribleHeader._ConnectHeader._ProtocolName
 
@@ -53,19 +51,15 @@ class c_MQTTService:
     #Validates the connection flags
     def ValidateFlags(self,client:c_MQTTClient):
         flags = client._MQTTPacket._VaribleHeader._ConnectHeader._ContentFlagByte
-        if flags.CleanSession == False:
+        if flags._CleanSession == False:
              
             #Do not remove the client session if the client disconnect
             #If the cleansSession is 0
             print("worked")
-        elif flags.CleanSession == True:
+        elif flags._CleanSession == True:
             #Discard old session and start a new session
             #Do not save data in case of reconnect
             print("worked")
-
-        if flags.Willflag == True:
-            #if
-            pass
 
 
     def GetKeepAlive(self, ClientID):

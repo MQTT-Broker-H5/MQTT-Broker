@@ -1,6 +1,4 @@
 from datetime import datetime
-from struct import pack
-from unicodedata import decimal
 class c_MQTTHelper:
 
     #Converts string hex format to decimal
@@ -86,7 +84,6 @@ class c_MQTTHelper:
         if command == "Connect":
             self.RemoveFromPacket(hexPacket,2)
             PNLenght = self.GetLenght(hexPacket,2)
-            print(PNLenght)
             identifyer = PNLenght + 6
             self.RemoveFromPacket(hexPacket,identifyer)
             clientIdLenght = self.GetLenght(hexPacket,2)
